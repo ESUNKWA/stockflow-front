@@ -27,8 +27,7 @@
               }
             ],
             "styles": [
-              "src/styles.css",
-              "public/css/codebase.min.css"
+              "src/styles.css"
             ],
             "scripts": [
             ]

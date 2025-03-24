@@ -1,0 +1,57 @@
+<div class="content">
+    <!-- Heading -->
+    <div class="block block-rounded">
+      <div class="block-content block-content-full overflow-x-auto">
+        <div class="py-3 text-center">
+          <h1 class="h3 fw-extrabold mb-1">
+            DataTables
+          </h1>
+          <h2 class="fs-sm fw-medium text-muted mb-0">
+            Tables transformed with dynamic features.
+          </h2>
+        </div>
+      </div>
+    </div>
+    <!-- END Heading -->
+
+    <!-- Dynamic Table with Export Buttons -->
+    <div class="block block-rounded">
+      <div class="block-header block-header-default">
+        <h3 class="block-title">
+          Dynamic Table <small>Export Buttons</small>
+        </h3>
+      </div>
+      <div class="block-content block-content-full overflow-x-auto">
+        <!-- DataTables init on table by adding .js-dataTable-buttons class, functionality is initialized in js/pages/be_tables_datatables.min.js which was auto compiled from _js/pages/be_tables_datatables.js -->
+        <table class="table table-bordered table-striped table-vcenter js-dataTable-buttons">
+          <thead>
+            <tr>
+              <th class="text-center"></th>
+              <th>Name</th>
+              <th class="d-none d-sm-table-cell">Email</th>
+              <th class="d-none d-sm-table-cell" style="width: 15%;">Access</th>
+              <th class="d-none d-sm-table-cell text-center" style="width: 15%;">Profile</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <tr>
+              <td class="text-center">1</td>
+              <td class="fw-semibold">Laura Carr</td>
+              <td class="d-none d-sm-table-cell">customer1example.com</td>
+              <td class="d-none d-sm-table-cell">
+                <span class="badge bg-info">Business</span>
+              </td>
+              <td class="d-none d-sm-table-cell text-center">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="tooltip" title="View Customer">
+                  <i class="fa fa-user"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- END Dynamic Table with Export Buttons -->
+
+  </div>
