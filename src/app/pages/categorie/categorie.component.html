@@ -4,10 +4,10 @@
       <div class="block-content block-content-full overflow-x-auto">
         <div class="py-3 text-center">
           <h1 class="h3 fw-extrabold mb-1">
-            DataTables
+            Gestion des Catégories
           </h1>
           <h2 class="fs-sm fw-medium text-muted mb-0">
-            Tables transformed with dynamic features.
+            Liste des catégories de produits
           </h2>
         </div>
       </div>
@@ -18,40 +18,94 @@
     <div class="block block-rounded">
       <div class="block-header block-header-default">
         <h3 class="block-title">
-          Dynamic Table <small>Export Buttons</small>
+          Catégories
         </h3>
+        <div class="block-options">
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-fadein" (click)="openAddModal()">
+            <i class="fa fa-plus me-1"></i> Nouvelle Catégorie
+          </button>
+        </div>
       </div>
       <div class="block-content block-content-full overflow-x-auto">
-        <!-- DataTables init on table by adding .js-dataTable-buttons class, functionality is initialized in js/pages/be_tables_datatables.min.js which was auto compiled from _js/pages/be_tables_datatables.js -->
+        <div *ngIf="isLoading" class="text-center py-3">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Chargement...</span>
+          </div>
+        </div>
+        
+        <!-- DataTables init on table by adding .js-dataTable-buttons class -->
         <table class="table table-bordered table-striped table-vcenter js-dataTable-buttons">
           <thead>
             <tr>
-              <th class="text-center"></th>
-              <th>Name</th>
-              <th class="d-none d-sm-table-cell">Email</th>
-              <th class="d-none d-sm-table-cell" style="width: 15%;">Access</th>
-              <th class="d-none d-sm-table-cell text-center" style="width: 15%;">Profile</th>
+              <th class="text-center" style="width: 10%;">ID</th>
+              <th>Nom</th>
+              <th class="d-none d-sm-table-cell">Description</th>
+              <th class="d-none d-sm-table-cell">Date de création</th>
+              <th class="text-center" style="width: 15%;">Actions</th>
             </tr>
           </thead>
           <tbody>
-
-            <tr>
-              <td class="text-center">1</td>
-              <td class="fw-semibold">Laura Carr</td>
-              <td class="d-none d-sm-table-cell">customer1example.com</td>
-              <td class="d-none d-sm-table-cell">
-                <span class="badge bg-info">Business</span>
+            <tr *ngFor="let categorie of categories">
+              <td class="text-center">{{ categorie.id }}</td>
+              <td class="fw-semibold">{{ categorie.nom }}</td>
+              <td class="d-none d-sm-table-cell">{{ categorie.description || 'Non définie' }}</td>
+              <td class="d-none d-sm-table-cell">{{ categorie.created_at | date: 'dd/MM/yyyy' }}</td>
+              <td class="text-center">
+                <div class="btn-group">
+                  <button type="button" class="btn btn-sm btn-alt-primary me-2" data-bs-toggle="tooltip" title="Modifier">
+                    <i class="fa fa-pencil-alt"></i>
+                  </button>
+                  <button type="button" class="btn btn-sm btn-alt-danger" data-bs-toggle="tooltip" title="Supprimer">
+                    <i class="fa fa-trash"></i>
+                  </button>
+                </div>
               </td>
-              <td class="d-none d-sm-table-cell text-center">
-                <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="tooltip" title="View Customer">
-                  <i class="fa fa-user"></i>
-                </button>
-              </td>
+            </tr>
+            <tr *ngIf="categories.length === 0 && !isLoading">
+              <td colspan="5" class="text-center">Aucune catégorie trouvée</td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
     <!-- END Dynamic Table with Export Buttons -->
-
   </div>
+
+  <!-- Modal pour ajouter une nouvelle catégorie -->
+  <div class="modal" [class.d-block]="showModal" [class.fade]="!showModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="block block-rounded shadow-none mb-0">
+          <div class="block-header block-header-default">
+            <h3 class="block-title">Nouvelle Catégorie</h3>
+            <div class="block-options">
+              <button type="button" class="btn-block-option" (click)="closeModal()">
+                <i class="fa fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <div class="block-content fs-sm">
+            <form>
+              <div class="mb-4">
+                <label class="form-label" for="nom">Nom</label>
+                <input type="text" class="form-control" id="nom" name="nom" placeholder="Nom de la catégorie">
+              </div>
+              <div class="mb-4">
+                <label class="form-label" for="description">Description</label>
+                <textarea class="form-control" id="description" name="description" rows="4" placeholder="Description de la catégorie"></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="block-content block-content-full block-content-sm text-end border-top">
+            <button type="button" class="btn btn-alt-primary me-2">
+              <i class="fa fa-save"></i> Enregistrer
+            </button>
+            <button type="button" class="btn btn-alt-secondary" (click)="closeModal()">
+              <i class="fa fa-times"></i> Annuler
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-backdrop fade" [class.show]="showModal" *ngIf="showModal"></div>
