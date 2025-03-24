@@ -16,7 +16,7 @@ export default class CategorieComponent implements OnInit {
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         if (isPlatformBrowser(this.platformId)) {
-          this.loadScripts();
+          //this.loadScripts();
         }
       }
     });
