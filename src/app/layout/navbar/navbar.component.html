@@ -36,25 +36,20 @@
         <div class="content-side content-side-user px-0 py-0">
           <!-- Visible only in mini mode -->
           <div class="smini-visible-block animated fadeIn px-3">
-            <img class="img-avatar img-avatar32" src="assets/media/avatars/avatar15.jpg" alt="">
+            <img class="img-avatar img-avatar32" src="public/media/avatars/avatar15.jpg" alt="">
           </div>
           <!-- END Visible only in mini mode -->
 
           <!-- Visible only in normal mode -->
           <div class="smini-hidden text-center mx-auto">
             <a class="img-link" href="be_pages_generic_profile.html">
-              <img class="img-avatar" src="assets/media/avatars/avatar15.jpg" alt="">
+              <img class="img-avatar" src="public/media/avatars/avatar15.jpg" alt="">
             </a>
             <ul class="list-inline mt-3 mb-0">
               <li class="list-inline-item">
                 <a class="link-fx text-dual fs-sm fw-semibold text-uppercase" href="be_pages_generic_profile.html">J. Smith</a>
               </li>
-              <li class="list-inline-item">
-                <!-- Layout API, functionality initialized in Template._uiApiLayout() -->
-                <a class="link-fx text-dual" data-toggle="layout" data-action="dark_mode_toggle" href="javascript:void(0)">
-                  <i class="far fa-fw fa-moon" data-dark-mode-icon></i>
-                </a>
-              </li>
+              
               <li class="list-inline-item">
                 <a class="link-fx text-dual" href="op_auth_signin.html">
                   <i class="fa fa-sign-out-alt"></i>
@@ -69,53 +64,34 @@
         <!-- Side Navigation -->
         <div class="content-side content-side-full">
           <ul class="nav-main">
-            <li class="nav-main-item">
-              <a class="nav-main-link active" href="javascript:void(0);" routerLink="/dashboard">
-                <i class="nav-main-link-icon fa fa-house-user"></i>
-                <span class="nav-main-link-name">Tableau de bord</span>
-              </a>
-            </li>
-            <li class="nav-main-item">
-              <a class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="false" href="#">
-                <i class="nav-main-link-icon fa fa-layer-group"></i>
-                <span class="nav-main-link-name">Gestion des Produits</span>
-              </a>
-              <ul class="nav-main-submenu">
+
+            @for (menu of menuItem; track $index) {
+              @if(!menu.sousmenu){
                 <li class="nav-main-item">
-                  <a class="nav-main-link" href="be_pages_dashboard2.html">
-                    <span class="nav-main-link-name">Catégories</span>
+                  <a class="nav-main-link active" href="javascript:void(0);" [routerLink]="menu.lien">
+                    <i class="nav-main-link-icon fa fa-house-user"></i>
+                    <span class="nav-main-link-name">{{menu?.nom}}</span>
                   </a>
                 </li>
+              }@else {
                 <li class="nav-main-item">
-                  <a class="nav-main-link" href="be_pages_dashboard3.html">
-                    <span class="nav-main-link-name">Produits</span>
+                  <a class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="false" href="#">
+                    <i class="nav-main-link-icon {{menu.icon}}"></i>
+                    <span class="nav-main-link-name">{{menu?.nom}}</span>
                   </a>
+                  <ul class="nav-main-submenu">
+                    @for (item of menu.sousmenu; track $index) {
+                      <li class="nav-main-item">
+                        <a class="nav-main-link" href="javascript:void(0);" [routerLink]="item.lien">
+                          <span class="nav-main-link-name">{{item?.nom}}</span>
+                        </a>
+                      </li>
+                    }
+                  </ul>
                 </li>
-                <li class="nav-main-item">
-                  <a class="nav-main-link" href="be_pages_dashboard4.html">
-                    <span class="nav-main-link-name">Fournisseurs</span>
-                  </a>
-                </li>
-              </ul>
-            </li>
-            <li class="nav-main-item">
-              <a class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="false" href="#">
-                <i class="nav-main-link-icon fa fa-arrow-trend-down"></i>
-                <span class="nav-main-link-name">Gestion des Achats</span>
-              </a>
-              <ul class="nav-main-submenu">
-                <li class="nav-main-item">
-                  <a class="nav-main-link" href="be_pages_dashboard2.html">
-                    <span class="nav-main-link-name">Achats</span>
-                  </a>
-                </li>
-                <li class="nav-main-item">
-                  <a class="nav-main-link" href="be_pages_dashboard3.html">
-                    <span class="nav-main-link-name">Historique des Achats</span>
-                  </a>
-                </li>
-              </ul>
-            </li>
+              }
+            }
+
           </ul>
 
         </div>

@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { menu } from '../core/menu';
 
 @Component({
   selector: 'app-navbar',
@@ -7,6 +8,14 @@ import { RouterLink } from '@angular/router';
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css'
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit {
+
+  public menuItem: any[] = menu;
+
+  ngOnInit(): void {
+   console.log(this.menuItem);
+   
+  }
+
 
 }
