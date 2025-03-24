@@ -6,28 +6,23 @@ export const menu: any[] = [
     },
     {
         nom: "Gestion des Produits",
-        lien: "/dashboard",
         icon:"fa fa-layer-group",
         sousmenu: [
             {
                 nom: "Catégories",
-                lien: "/dashboard",
-                icon:"fa fa-house-user"
+                lien: "/dashboard"
             },
             {
                 nom: "Fournisseurs",
-                lien: "/dashboard",
-                icon:"fa fa-house-user"
+                lien: "/dashboard"
             },{
                 nom: "Produits",
-                lien: "/dashboard",
-                icon:"fa fa-house-user"
+                lien: "/dashboard"
             }
         ]
     },
     {
         nom: "Gestion des Achats",
-        lien: "",
         icon:"fa fa-cart-shopping",
         sousmenu: [
             {
@@ -42,7 +37,6 @@ export const menu: any[] = [
     },
     {
         nom: "Gestion des Ventes",
-        lien: "/",
         icon:"fa fa-money-check-dollar",
         sousmenu: [
             {
@@ -61,7 +55,6 @@ export const menu: any[] = [
     },
     {
         nom: "Gestion du Stock",
-        lien: "/",
         icon:"fa fa-chart-pie",
         sousmenu: [
             {

@@ -13,8 +13,6 @@ export class NavbarComponent implements OnInit {
   public menuItem: any[] = menu;
 
   ngOnInit(): void {
-   console.log(this.menuItem);
-   
   }
 
 
