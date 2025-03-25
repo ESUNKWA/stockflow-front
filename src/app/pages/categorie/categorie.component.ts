@@ -73,6 +73,15 @@ export default class CategorieComponent implements OnInit {
     });
   }
 
+  openNewModal(): void {
+    this.isEditMode = false;
+    this.selectedCategorie = null;
+    this.buttonText = 'Enregistrer';
+    this.icon = 'fa fa-save';
+    this.categorieForm.reset();
+    this.isSubmitted = false;
+  }
+
   openModal(categorie?: Categorie): void {
     this.isEditMode = !!categorie;
     this.selectedCategorie = categorie || null;
@@ -135,11 +144,6 @@ export default class CategorieComponent implements OnInit {
             }
           }
 
-          // Afficher la notification de succès
-          this.showNotification('success', 
-            this.isEditMode ? 'Catégorie modifiée avec succès' : 'Catégorie créée avec succès'
-          );
-
           // Recharger la liste des catégories
           this.loadCategories();
 
@@ -151,31 +155,9 @@ export default class CategorieComponent implements OnInit {
         }
       },
       error: (error: any) => {
-        this.showNotification('danger', 
-          this.isEditMode ? 'Erreur lors de la modification de la catégorie' : 'Erreur lors de la création de la catégorie'
-        );
+        console.log(error);
       }
     });
-  }
-
-  showNotification(type: string, message: string): void {
-    if (isPlatformBrowser(this.platformId)) {
-      const $ = (window as any).$;
-      if ($) {
-        $.notify({
-          icon: type === 'success' ? 'fa fa-check' : 'fa fa-times',
-          message: message
-        }, {
-          type: type,
-          placement: {
-            from: 'top',
-            align: 'right'
-          },
-          delay: 3000,
-          z_index: 2000
-        });
-      }
-    }
   }
 
   initDataTable(): void {
