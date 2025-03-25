@@ -14,4 +14,20 @@ export class CategorieService {
   getAllCategories() {
     return this.http.get(`${this.API_URL}/categorie`);
   }
+
+  createCategorie(categorie: any) {
+    return this.http.post(`${this.API_URL}/categorie`, categorie);
+  }
+
+  getCategorieById(id: number) {
+    return this.http.get(`${this.API_URL}/categorie/${id}`);
+  }
+
+  updateCategorie(id: number, categorie: any) {
+    return this.http.put(`${this.API_URL}/categorie/${id}`, categorie);
+  }
+
+  deleteCategorie(id: number) {
+    return this.http.delete(`${this.API_URL}/categorie/${id}`);
+  }
 }

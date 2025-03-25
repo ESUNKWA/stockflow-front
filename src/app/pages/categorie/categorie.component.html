@@ -21,7 +21,7 @@
           Catégories
         </h3>
         <div class="block-options">
-          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-fadein" (click)="openAddModal()">
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-fadein">
             <i class="fa fa-plus me-1"></i> Nouvelle Catégorie
           </button>
         </div>
@@ -37,7 +37,6 @@
         <table class="table table-bordered table-striped table-vcenter js-dataTable-buttons">
           <thead>
             <tr>
-              <th class="text-center" style="width: 10%;">ID</th>
               <th>Nom</th>
               <th class="d-none d-sm-table-cell">Description</th>
               <th class="d-none d-sm-table-cell">Date de création</th>
@@ -46,13 +45,12 @@
           </thead>
           <tbody>
             <tr *ngFor="let categorie of categories">
-              <td class="text-center">{{ categorie.id }}</td>
               <td class="fw-semibold">{{ categorie.nom }}</td>
               <td class="d-none d-sm-table-cell">{{ categorie.description || 'Non définie' }}</td>
               <td class="d-none d-sm-table-cell">{{ categorie.created_at | date: 'dd/MM/yyyy' }}</td>
               <td class="text-center">
                 <div class="btn-group">
-                  <button type="button" class="btn btn-sm btn-alt-primary me-2" data-bs-toggle="tooltip" title="Modifier">
+                  <button type="button" class="btn btn-sm btn-alt-success me-2" data-bs-toggle="tooltip" title="Modifier" (click)="openModal(categorie)">
                     <i class="fa fa-pencil-alt"></i>
                   </button>
                   <button type="button" class="btn btn-sm btn-alt-danger" data-bs-toggle="tooltip" title="Supprimer">
@@ -72,40 +70,53 @@
   </div>
 
   <!-- Modal pour ajouter une nouvelle catégorie -->
-  <div class="modal" [class.d-block]="showModal" [class.fade]="!showModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+  <div class="modal fade" id="modal-fadein" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="block block-rounded shadow-none mb-0">
           <div class="block-header block-header-default">
             <h3 class="block-title">Nouvelle Catégorie</h3>
             <div class="block-options">
-              <button type="button" class="btn-block-option" (click)="closeModal()">
+              <button type="button" class="btn-block-option" data-bs-dismiss="modal" aria-label="Close">
                 <i class="fa fa-times"></i>
               </button>
             </div>
           </div>
-          <div class="block-content fs-sm">
-            <form>
+          <form novalidate [formGroup]="categorieForm" (ngSubmit)="saveOrUpdateCategorie()">
+            <div class="block-content fs-sm">
               <div class="mb-4">
                 <label class="form-label" for="nom">Nom</label>
-                <input type="text" class="form-control" id="nom" name="nom" placeholder="Nom de la catégorie">
+                <input type="text" class="form-control" id="nom" placeholder="Nom de la catégorie" formControlName="nom" [ngClass]="{'is-invalid': isSubmitted && f['nom'].errors}">
+                @if (isSubmitted && f['nom'].errors) {
+                  <div class="invalid-feedback">
+                    @if (f['nom'].errors['required']) {
+                      <div>Le nom est obligatoire</div>
+                    }
+                  </div>
+                }
               </div>
               <div class="mb-4">
                 <label class="form-label" for="description">Description</label>
-                <textarea class="form-control" id="description" name="description" rows="4" placeholder="Description de la catégorie"></textarea>
+                <textarea class="form-control" id="description" placeholder="Description de la catégorie" formControlName="description" [ngClass]="{'is-invalid': isSubmitted && f['description'].errors}"></textarea>
+                @if (isSubmitted && f['description'].errors) {
+                  <div class="invalid-feedback">
+                    @if (f['description'].errors['required']) {
+                      <div>La description est obligatoire</div>
+                    }
+                  </div>
+                }
               </div>
-            </form>
-          </div>
-          <div class="block-content block-content-full block-content-sm text-end border-top">
-            <button type="button" class="btn btn-alt-primary me-2">
-              <i class="fa fa-save"></i> Enregistrer
-            </button>
-            <button type="button" class="btn btn-alt-secondary" (click)="closeModal()">
-              <i class="fa fa-times"></i> Annuler
-            </button>
-          </div>
+            </div>
+            <div class="block-content block-content-full block-content-sm text-end border-top">
+              <button type="submit" class="btn btn-alt-primary jq-notify me-2">
+                <i [class]="icon"></i> {{ buttonText }}
+              </button>
+              <button type="button" class="btn btn-alt-warning" data-bs-dismiss="modal">
+                <i class="fa fa-times"></i> Annuler
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
-  </div>
-  <div class="modal-backdrop fade" [class.show]="showModal" *ngIf="showModal"></div>
+  </div>  

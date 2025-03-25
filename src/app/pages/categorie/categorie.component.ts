@@ -2,6 +2,8 @@ import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { isPlatformBrowser, NgFor, NgIf, CommonModule } from '@angular/common';
 import { CategorieService } from '../../services/categorie/categorie.service';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+
 
 interface Categorie {
   id: number;
@@ -15,20 +17,31 @@ interface Categorie {
 @Component({
   selector: 'app-categorie',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './categorie.component.html',
   styleUrl: './categorie.component.css'
 })
 export default class CategorieComponent implements OnInit {
   categories: Categorie[] = [];
   isLoading: boolean = false;
-  showModal: boolean = false;
+  categorieForm: FormGroup;
+  isSubmitted: boolean = false;
+  isEditMode: boolean = false;
+  selectedCategorie: Categorie | null = null;
+  buttonText: string = 'Enregistrer';
+  icon: string = 'fa fa-save';
 
   constructor(
     private router: Router,
     private categorieService: CategorieService,
+    private formBuilder: FormBuilder,
     @Inject(PLATFORM_ID) private platformId: any
-  ) {}
+  ) {
+    this.categorieForm = this.formBuilder.group({
+      nom: ['', [Validators.required]],
+      description: ['', [Validators.required]]
+    });
+  }
 
   ngOnInit(): void {
     this.router.events.subscribe((event) => {
@@ -40,6 +53,9 @@ export default class CategorieComponent implements OnInit {
     });
     this.loadCategories();
   }
+
+  // getter pour un accès facile aux champs du formulaire
+  get f() { return this.categorieForm.controls; }
 
   loadCategories(): void {
     this.isLoading = true;
@@ -57,12 +73,109 @@ export default class CategorieComponent implements OnInit {
     });
   }
 
-  openAddModal(): void {
-    this.showModal = true;
+  openModal(categorie?: Categorie): void {
+    this.isEditMode = !!categorie;
+    this.selectedCategorie = categorie || null;
+    this.buttonText = this.isEditMode ? 'Modifier' : 'Enregistrer';
+    this.icon = this.isEditMode ? 'fa fa-pencil-alt' : 'fa fa-save';
+
+    if (this.isEditMode && categorie) {
+      // Remplir le formulaire avec les données de la catégorie
+      this.categorieForm.patchValue({
+        nom: categorie.nom,
+        description: categorie.description || ''
+      });
+    } else {
+      // Réinitialiser le formulaire pour une nouvelle catégorie
+      this.categorieForm.reset();
+    }
+
+    this.isSubmitted = false;
+
+    // Ouvrir le modal
+    const modal = document.getElementById('modal-fadein');
+    if (modal) {
+      const modalInstance = new (window as any).bootstrap.Modal(modal);
+      modalInstance.show();
+    }
   }
 
-  closeModal(): void {
-    this.showModal = false;
+  saveOrUpdateCategorie(): void {
+    this.isSubmitted = true;
+
+    // arrêter ici si le formulaire est invalide
+    if (this.categorieForm.invalid) {
+      return;
+    }
+
+    // Créer l'objet catégorie
+    const categorie = {
+      nom: this.categorieForm.get('nom')?.value,
+      description: this.categorieForm.get('description')?.value
+    };
+
+    let request;
+    if (this.isEditMode && this.selectedCategorie) {
+      // Mode modification
+      request = this.categorieService.updateCategorie(this.selectedCategorie.id, categorie);
+    } else {
+      // Mode création
+      request = this.categorieService.createCategorie(categorie);
+    }
+
+    request.subscribe({
+      next: (response: any) => {
+        if (response.status === 'success') {
+          // Fermer le modal
+          const modal = document.getElementById('modal-fadein');
+          if (modal) {
+            const modalInstance = (window as any).bootstrap.Modal.getInstance(modal);
+            if (modalInstance) {
+              modalInstance.hide();
+            }
+          }
+
+          // Afficher la notification de succès
+          this.showNotification('success', 
+            this.isEditMode ? 'Catégorie modifiée avec succès' : 'Catégorie créée avec succès'
+          );
+
+          // Recharger la liste des catégories
+          this.loadCategories();
+
+          // Réinitialiser le formulaire et les états
+          this.categorieForm.reset();
+          this.isSubmitted = false;
+          this.isEditMode = false;
+          this.selectedCategorie = null;
+        }
+      },
+      error: (error: any) => {
+        this.showNotification('danger', 
+          this.isEditMode ? 'Erreur lors de la modification de la catégorie' : 'Erreur lors de la création de la catégorie'
+        );
+      }
+    });
+  }
+
+  showNotification(type: string, message: string): void {
+    if (isPlatformBrowser(this.platformId)) {
+      const $ = (window as any).$;
+      if ($) {
+        $.notify({
+          icon: type === 'success' ? 'fa fa-check' : 'fa fa-times',
+          message: message
+        }, {
+          type: type,
+          placement: {
+            from: 'top',
+            align: 'right'
+          },
+          delay: 3000,
+          z_index: 2000
+        });
+      }
+    }
   }
 
   initDataTable(): void {
@@ -83,19 +196,20 @@ export default class CategorieComponent implements OnInit {
 
   loadScripts() {
     const dynamicScripts = [
-      "public/js/lib/jquery.min.js",
-      "public/js/plugins/datatables/dataTables.min.js",
-      "public/js/plugins/datatables-bs5/js/dataTables.bootstrap5.min.js",
-      "public/js/plugins/datatables-responsive/js/dataTables.responsive.min.js",
-      "public/js/plugins/datatables-responsive-bs5/js/responsive.bootstrap5.min.js",
-      "public/js/plugins/datatables-buttons/dataTables.buttons.min.js",
-      "public/js/plugins/datatables-buttons-bs5/js/buttons.bootstrap5.min.js",
-      "public/js/plugins/datatables-buttons-jszip/jszip.min.js",
-      "public/js/plugins/datatables-buttons-pdfmake/pdfmake.min.js",
-      "public/js/plugins/datatables-buttons-pdfmake/vfs_fonts.js",
-      "public/js/plugins/datatables-buttons/buttons.print.min.js",
-      "public/js/plugins/datatables-buttons/buttons.html5.min.js",
-      "public/js/pages/be_tables_datatables.min.js"
+      "/js/lib/jquery.min.js",
+      "/js/plugins/datatables/dataTables.min.js",
+      "/js/plugins/datatables-bs5/js/dataTables.bootstrap5.min.js",
+      "/js/plugins/datatables-responsive/js/dataTables.responsive.min.js",
+      "/js/plugins/datatables-responsive-bs5/js/responsive.bootstrap5.min.js",
+      "/js/plugins/datatables-buttons/dataTables.buttons.min.js",
+      "/js/plugins/datatables-buttons-bs5/js/buttons.bootstrap5.min.js",
+      "/js/plugins/datatables-buttons-jszip/jszip.min.js",
+      "/js/plugins/datatables-buttons-pdfmake/pdfmake.min.js",
+      "/js/plugins/datatables-buttons-pdfmake/vfs_fonts.js",
+      "/js/plugins/datatables-buttons/buttons.print.min.js",
+      "/js/plugins/datatables-buttons/buttons.html5.min.js",
+      "/js/pages/be_tables_datatables.min.js",
+      "/js/plugins/bootstrap-notify/bootstrap-notify.min.js"
     ];
     
     dynamicScripts.forEach(script => {
