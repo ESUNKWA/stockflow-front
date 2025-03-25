@@ -18,7 +18,7 @@
     <div class="block block-rounded">
       <div class="block-header block-header-default">
         <h3 class="block-title">
-          Catégories
+          Liste des Catégories
         </h3>
         <div class="block-options">
           <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-fadein" (click)="openNewModal()">
@@ -47,7 +47,7 @@
             <tr *ngFor="let categorie of categories">
               <td class="fw-semibold">{{ categorie.nom }}</td>
               <td class="d-none d-sm-table-cell">{{ categorie.description || 'Non définie' }}</td>
-              <td class="d-none d-sm-table-cell">{{ categorie.created_at | date: 'dd/MM/yyyy' }}</td>
+              <td class="d-none d-sm-table-cell">{{ categorie.created_at | date:'dd/MM/yyyy' }}</td>
               <td class="text-center">
                 <div class="btn-group">
                   <button type="button" class="btn btn-sm btn-alt-success me-2" data-bs-toggle="tooltip" title="Modifier" (click)="openModal(categorie)">
@@ -66,7 +66,6 @@
         </table>
       </div>
     </div>
-    <!-- END Dynamic Table with Export Buttons -->
   </div>
 
   <!-- Modal pour ajouter une nouvelle catégorie -->

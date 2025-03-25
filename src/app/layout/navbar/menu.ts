@@ -17,7 +17,7 @@ export const menu: any[] = [
                 lien: "/dashboard"
             },{
                 nom: "Produits",
-                lien: "/dashboard"
+                lien: "/produit"
             }
         ]
     },
