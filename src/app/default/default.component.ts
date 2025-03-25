@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Inject, PLATFORM_ID } from '@angular/core';
 import { NavbarComponent } from "../layout/navbar/navbar.component";
 import { HeaderComponent } from "../layout/header/header.component";
 import { FooterComponent } from "../layout/footer/footer.component";
