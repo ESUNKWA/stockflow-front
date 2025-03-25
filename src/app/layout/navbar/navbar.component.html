@@ -67,13 +67,19 @@
 
             @for (menu of menuItem; track $index) {
               @if(!menu.sousmenu){
+                @if (menu.nom.toLowerCase() == "utilisateurs") {
+                  <li class="nav-main-heading">Paramètres</li>
+                }
                 <li class="nav-main-item">
                   <a class="nav-main-link active" href="javascript:void(0);" [routerLink]="menu.lien">
-                    <i class="nav-main-link-icon fa fa-house-user"></i>
+                    <i class="nav-main-link-icon fa {{ menu.icon }}"></i>
                     <span class="nav-main-link-name">{{menu?.nom}}</span>
                   </a>
                 </li>
-              }@else {
+              } @else {
+                @if (menu.nom.toLowerCase() == "gestion des produits") {
+                  <li class="nav-main-heading">Gestion</li>
+                }
                 <li class="nav-main-item">
                   <a class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="false" routerLink>
                     <i class="nav-main-link-icon {{menu.icon}}"></i>

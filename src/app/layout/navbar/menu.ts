@@ -70,5 +70,15 @@ export const menu: any[] = [
                 lien: "/dashboard"
             }
         ]
+    },
+    {
+        nom: "Utilisateurs",
+        lien: "/dashboard",
+        icon:"fa fa-user-cog",
+    },
+    {
+        nom: "Configuration",
+        lien: "/dashboard",
+        icon:"fa fa-cog",
     }
 ];
