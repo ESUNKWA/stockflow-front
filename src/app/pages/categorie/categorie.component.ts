@@ -28,6 +28,7 @@ export default class CategorieComponent implements OnInit {
   isSubmitted: boolean = false;
   isEditMode: boolean = false;
   selectedCategorie: Categorie | null = null;
+  titleModal: string = 'Ajouter une catégorie';
   buttonText: string = 'Enregistrer';
   icon: string = 'fa fa-save';
 
@@ -44,13 +45,13 @@ export default class CategorieComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.router.events.subscribe((event) => {
-      if (event instanceof NavigationEnd) {
-        if (isPlatformBrowser(this.platformId)) {
-          this.loadScripts();
-        }
-      }
-    });
+    // this.router.events.subscribe((event) => {
+    //   if (event instanceof NavigationEnd) {
+    //     if (isPlatformBrowser(this.platformId)) {
+    //       this.loadScripts();
+    //     }
+    //   }
+    // });
     this.loadCategories();
   }
 
@@ -63,11 +64,59 @@ export default class CategorieComponent implements OnInit {
       next: (response: any) => {
         if (response.status === 'success' && response.data) {
           this.categories = response.data;
+          // Attendre que le DOM soit mis à jour
+          setTimeout(() => {
+            if (isPlatformBrowser(this.platformId)) {
+              const $ = (window as any).$;
+              if ($ && $.fn.dataTable) {
+                try {
+                  // Détruire l'instance existante si elle existe
+                  const existingTable = $('.js-dataTable-buttons').DataTable();
+                  if (existingTable) {
+                    existingTable.destroy();
+                  }
+                  
+                  // Initialiser une nouvelle instance
+                  $('.js-dataTable-buttons').DataTable({
+                    language: {
+                      emptyTable: "Aucune donnée disponible dans le tableau",
+                      info: "Affichage de _START_ à _END_ sur _TOTAL_ entrées",
+                      infoEmpty: "Affichage de 0 à 0 sur 0 entrée",
+                      infoFiltered: "(filtré de _MAX_ entrées au total)",
+                      infoThousands: ",",
+                      lengthMenu: "Afficher _MENU_ entrées",
+                      loadingRecords: "Chargement...",
+                      processing: "Traitement...",
+                      search: "Rechercher :",
+                      zeroRecords: "Aucun enregistrement trouvé",
+                      paginate: {
+                        first: '<i class="fa fa-angle-double-left"></i>',
+                        previous: '<i class="fa fa-chevron-left"></i>',
+                        next: '<i class="fa fa-chevron-right"></i>',
+                        last: '<i class="fa fa-angle-double-right"></i>'
+                      }
+                    },
+                    dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
+                         '<"row"<"col-sm-12"tr>>' +
+                         '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                    pageLength: 10,
+                    searching: true,
+                    info: true,
+                    lengthChange: true,
+                    responsive: true,
+                    pagingType: 'full_numbers'
+                  });
+                } catch (error) {
+                  console.error('Erreur lors de l\'initialisation de DataTable:', error);
+                }
+              }
+            }
+          }, 100);
         }
         this.isLoading = false;
-        setTimeout(() => this.initDataTable(), 100);
       },
       error: (error: any) => {
+        console.error('Erreur lors du chargement des catégories:', error);
         this.isLoading = false;
       }
     });
@@ -76,6 +125,7 @@ export default class CategorieComponent implements OnInit {
   openNewModal(): void {
     this.isEditMode = false;
     this.selectedCategorie = null;
+    this.titleModal = 'Ajouter une catégorie';
     this.buttonText = 'Enregistrer';
     this.icon = 'fa fa-save';
     this.categorieForm.reset();
@@ -87,6 +137,7 @@ export default class CategorieComponent implements OnInit {
     this.selectedCategorie = categorie || null;
     this.buttonText = this.isEditMode ? 'Modifier' : 'Enregistrer';
     this.icon = this.isEditMode ? 'fa fa-pencil-alt' : 'fa fa-save';
+    this.titleModal = this.isEditMode ? 'Modifier une catégorie' : 'Ajouter une catégorie';
 
     if (this.isEditMode && categorie) {
       // Remplir le formulaire avec les données de la catégorie
@@ -160,46 +211,97 @@ export default class CategorieComponent implements OnInit {
     });
   }
 
-  initDataTable(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      const $ = (window as any).$;
-      if ($ && $.fn.dataTable) {
-        $('.js-dataTable-buttons').DataTable({
-          responsive: true,
-          language: {
-            search: 'Rechercher',
-            lengthMenu: 'Afficher _MENU_ entrées',
-            info: 'Affichage de _START_ à _END_ sur _TOTAL_ entrées'
-          }
-        });
-      }
-    }
-  }
-
-  loadScripts() {
-    const dynamicScripts = [
-      "/js/lib/jquery.min.js",
-      "/js/plugins/datatables/dataTables.min.js",
-      "/js/plugins/datatables-bs5/js/dataTables.bootstrap5.min.js",
-      "/js/plugins/datatables-responsive/js/dataTables.responsive.min.js",
-      "/js/plugins/datatables-responsive-bs5/js/responsive.bootstrap5.min.js",
-      "/js/plugins/datatables-buttons/dataTables.buttons.min.js",
-      "/js/plugins/datatables-buttons-bs5/js/buttons.bootstrap5.min.js",
-      "/js/plugins/datatables-buttons-jszip/jszip.min.js",
-      "/js/plugins/datatables-buttons-pdfmake/pdfmake.min.js",
-      "/js/plugins/datatables-buttons-pdfmake/vfs_fonts.js",
-      "/js/plugins/datatables-buttons/buttons.print.min.js",
-      "/js/plugins/datatables-buttons/buttons.html5.min.js",
-      "/js/pages/be_tables_datatables.min.js",
-      "/js/plugins/bootstrap-notify/bootstrap-notify.min.js"
-    ];
+  // loadScripts() {
+  //   console.log('Début du chargement des scripts...');
+  //   const dynamicScripts = [
+  //     "/js/lib/jquery.min.js",
+  //     "/js/plugins/datatables/jquery.dataTables.min.js",
+  //     "/js/plugins/datatables-bs5/js/dataTables.bootstrap5.min.js",
+  //     "/js/plugins/datatables-responsive/js/dataTables.responsive.min.js",
+  //     "/js/plugins/datatables-responsive-bs5/js/responsive.bootstrap5.min.js",
+  //     "/js/plugins/datatables-buttons/dataTables.buttons.min.js",
+  //     "/js/plugins/datatables-buttons-bs5/js/buttons.bootstrap5.min.js",
+  //     "/js/plugins/datatables-buttons-jszip/jszip.min.js",
+  //     "/js/plugins/datatables-buttons-pdfmake/pdfmake.min.js",
+  //     "/js/plugins/datatables-buttons-pdfmake/vfs_fonts.js",
+  //     "/js/plugins/datatables-buttons/buttons.print.min.js",
+  //     "/js/plugins/datatables-buttons/buttons.html5.min.js"
+  //   ];
     
-    dynamicScripts.forEach(script => {
-      const node = document.createElement('script');
-      node.src = script;
-      node.type = 'text/javascript';
-      node.async = false;
-      document.body.appendChild(node);
-    });
-  }
+  //   let loadedScripts = 0;
+    
+  //   const loadScript = (script: string): Promise<void> => {
+  //     return new Promise((resolve, reject) => {
+  //       console.log(`Chargement du script: ${script}`);
+  //       const node = document.createElement('script');
+  //       node.src = script;
+  //       node.type = 'text/javascript';
+  //       node.async = false;
+  //       node.onload = () => {
+  //         loadedScripts++;
+  //         console.log(`Script chargé avec succès: ${script}`);
+  //         if (loadedScripts === dynamicScripts.length) {
+  //           console.log('Tous les scripts sont chargés, initialisation de DataTable...');
+  //           setTimeout(() => this.initDataTable(), 100);
+  //         }
+  //         resolve();
+  //       };
+  //       node.onerror = (error) => {
+  //         console.error(`Erreur lors du chargement du script ${script}:`, error);
+  //         reject(error);
+  //       };
+  //       document.body.appendChild(node);
+  //     });
+  //   };
+
+  //   dynamicScripts.reduce((promise, script) => {
+  //     return promise.then(() => loadScript(script));
+  //   }, Promise.resolve());
+  // }
+
+  // initDataTable(): void {
+  //   if (isPlatformBrowser(this.platformId)) {
+  //     console.log('Initialisation de DataTable...');
+  //     const $ = (window as any).$;
+  //     console.log('jQuery disponible:', !!$);
+  //     console.log('DataTable disponible:', !!($ && $.fn.dataTable));
+      
+  //     if ($ && $.fn.dataTable) {
+  //       try {
+  //         const table = $('.js-dataTable-buttons').DataTable({
+  //           language: {
+  //             emptyTable: "Aucune donnée disponible dans le tableau",
+  //             info: "Affichage de _START_ à _END_ sur _TOTAL_ entrées",
+  //             infoEmpty: "Affichage de 0 à 0 sur 0 entrée",
+  //             infoFiltered: "(filtré de _MAX_ entrées au total)",
+  //             infoThousands: ",",
+  //             lengthMenu: "Afficher _MENU_ entrées",
+  //             loadingRecords: "Chargement...",
+  //             processing: "Traitement...",
+  //             search: "Rechercher :",
+  //             zeroRecords: "Aucun enregistrement trouvé",
+  //             paginate: {
+  //               first: '<i class="fa fa-angle-double-left"></i>',
+  //               previous: '<i class="fa fa-chevron-left"></i>',
+  //               next: '<i class="fa fa-chevron-right"></i>',
+  //               last: '<i class="fa fa-angle-double-right"></i>'
+  //             }
+  //           },
+  //           dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
+  //                '<"row"<"col-sm-12"tr>>' +
+  //                '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+  //           pageLength: 10,
+  //           searching: true,
+  //           info: true,
+  //           lengthChange: true,
+  //           responsive: true,
+  //           pagingType: 'full_numbers'
+  //         });
+  //         console.log('DataTable initialisé avec succès');
+  //       } catch (error) {
+  //         console.error('Erreur lors de l\'initialisation de DataTable:', error);
+  //       }
+  //     }
+  //   }
+  // }
 }
