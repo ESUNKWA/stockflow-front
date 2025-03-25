@@ -83,22 +83,19 @@ export default class CategorieComponent implements OnInit {
 
   loadScripts() {
     const dynamicScripts = [
-      "/js/codebase.app.min.js",
-      "/js/plugins/chart.js/chart.umd.js",
-      "/js/pages/be_pages_dashboard.min.js",
-      "/js/lib/jquery.min.js",
-      "/js/plugins/datatables/dataTables.min.js",
-      "/js/plugins/datatables-bs5/js/dataTables.bootstrap5.min.js",
-      "/js/plugins/datatables-responsive/js/dataTables.responsive.min.js",
-      "/js/plugins/datatables-responsive-bs5/js/responsive.bootstrap5.min.js",
-      "/js/plugins/datatables-buttons/dataTables.buttons.min.js",
-      "/js/plugins/datatables-buttons-bs5/js/buttons.bootstrap5.min.js",
-      "/js/plugins/datatables-buttons-jszip/jszip.min.js",
-      "/js/plugins/datatables-buttons-pdfmake/pdfmake.min.js",
-      "/js/plugins/datatables-buttons-pdfmake/vfs_fonts.js",
-      "/js/plugins/datatables-buttons/buttons.print.min.js",
-      "/js/plugins/datatables-buttons/buttons.html5.min.js",
-      "/js/pages/be_tables_datatables.min.js"
+      "public/js/lib/jquery.min.js",
+      "public/js/plugins/datatables/dataTables.min.js",
+      "public/js/plugins/datatables-bs5/js/dataTables.bootstrap5.min.js",
+      "public/js/plugins/datatables-responsive/js/dataTables.responsive.min.js",
+      "public/js/plugins/datatables-responsive-bs5/js/responsive.bootstrap5.min.js",
+      "public/js/plugins/datatables-buttons/dataTables.buttons.min.js",
+      "public/js/plugins/datatables-buttons-bs5/js/buttons.bootstrap5.min.js",
+      "public/js/plugins/datatables-buttons-jszip/jszip.min.js",
+      "public/js/plugins/datatables-buttons-pdfmake/pdfmake.min.js",
+      "public/js/plugins/datatables-buttons-pdfmake/vfs_fonts.js",
+      "public/js/plugins/datatables-buttons/buttons.print.min.js",
+      "public/js/plugins/datatables-buttons/buttons.html5.min.js",
+      "public/js/pages/be_tables_datatables.min.js"
     ];
     
     dynamicScripts.forEach(script => {
