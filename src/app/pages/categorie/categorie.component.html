@@ -71,6 +71,7 @@
     </div>
   </div>
 
+
   <!-- Modal pour ajouter une nouvelle catégorie -->
   <div class="modal fade modal-lg" id="modal-fadein" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -110,11 +111,13 @@
               </div>
             </div>
             <div class="block-content block-content-full block-content-sm text-end border-top">
-              <button type="submit" class="btn btn-alt-primary jq-notify me-2">
-                <i [class]="icon"></i> {{ buttonText }}
-              </button>
+              @if (!titleModal.includes('VISUALISER')) {
+                <button type="submit" class="btn btn-alt-primary jq-notify me-2">
+                  <i [class]="icon"></i> {{ buttonText }}
+                </button>
+              }
               <button type="button" class="btn btn-alt-warning" data-bs-dismiss="modal">
-                <i class="fa fa-times"></i> Annuler
+                <i class="fa fa-times"></i> {{ titleModal.includes('VISUALISER') ? 'Fermer' : 'Annuler' }}
               </button>
             </div>
           </form>

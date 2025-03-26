@@ -79,7 +79,7 @@ export default class CategorieComponent implements OnInit {
                   // Initialiser une nouvelle instance
                   $('.js-dataTable-buttons').DataTable({
                     language: {
-                      emptyTable: "Aucune donnée disponible dans le tableau",
+                      emptyTable: "Aucune donnée",
                       info: "Affichage de _START_ à _END_ sur _TOTAL_ entrées",
                       infoEmpty: "Affichage de 0 à 0 sur 0 entrée",
                       infoFiltered: "(filtré de _MAX_ entrées au total)",
@@ -99,7 +99,7 @@ export default class CategorieComponent implements OnInit {
                     dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
                          '<"row"<"col-sm-12"tr>>' +
                          '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
-                    pageLength: 10,
+                    pageLength: 5,
                     searching: true,
                     info: true,
                     lengthChange: true,
@@ -142,6 +142,10 @@ export default class CategorieComponent implements OnInit {
     const defaultTitle = 'Ajouter une catégorie';
     this.titleModal = this.isEditMode ? title.toUpperCase() : defaultTitle.toUpperCase();
 
+    // Désactiver les champs du formulaire
+    this.categorieForm.get('nom')?.enable();
+    this.categorieForm.get('description')?.enable();
+
     if (this.isEditMode && categorie) {
       // Remplir le formulaire avec les données de la catégorie
       this.categorieForm.patchValue({
@@ -168,11 +172,20 @@ export default class CategorieComponent implements OnInit {
     const title = 'Visualiser une catégorie';
     this.titleModal = title.toUpperCase();
     this.buttonText = 'Fermer';
-    this.icon = 'fa fa-eye';
+    this.icon = 'fa fa-times';
     this.categorieForm.reset();
     this.isSubmitted = false;
 
-    // Ouvrir le modal
+    // Remplir le formulaire en lecture seule
+    this.categorieForm.patchValue({
+      nom: categorie.nom,
+      description: categorie.description || ''
+    });
+
+    // Désactiver les champs du formulaire
+    this.categorieForm.get('nom')?.disable();
+    this.categorieForm.get('description')?.disable();
+
     const modal = document.getElementById('modal-fadein');
     if (modal) {
       const modalInstance = new (window as any).bootstrap.Modal(modal);
@@ -201,14 +214,39 @@ export default class CategorieComponent implements OnInit {
     request.subscribe({
       next: (response: any) => {
         if (response.status === 'success') {
+          // Fermer le modal
           if (this.isEditMode) {
-            // Fermer le modal
             const modal = document.getElementById('modal-fadein');
             if (modal) {
               const modalInstance = (window as any).bootstrap.Modal.getInstance(modal);
               if (modalInstance) {
                 modalInstance.hide();
               }
+            }
+          }
+
+          // Afficher la notification
+          if (isPlatformBrowser(this.platformId)) {
+            const $ = (window as any).$;
+            if ($) {
+              $.notify({
+                icon: 'fa fa-check me-1',
+                message: this.isEditMode ? 
+                  'La catégorie a été modifiée avec succès' : 
+                  'La catégorie a été ajoutée avec succès'
+              }, {
+                type: 'success',
+                placement: {
+                  from: 'top',
+                  align: 'right'
+                },
+                delay: 3000,
+                z_index: 9999,
+                animate: {
+                  enter: 'animated fadeInDown',
+                  exit: 'animated fadeOutUp'
+                }
+              });
             }
           }
 
@@ -223,7 +261,30 @@ export default class CategorieComponent implements OnInit {
         }
       },
       error: (error: any) => {
-        console.log(error);
+        console.error('Erreur lors de la sauvegarde:', error);
+        
+        // Afficher une notification d'erreur
+        if (isPlatformBrowser(this.platformId)) {
+          const $ = (window as any).$;
+          if ($) {
+            $.notify({
+              icon: 'fa fa-times me-1',
+              message: 'Une erreur est survenue lors de la sauvegarde'
+            }, {
+              type: 'danger',
+              placement: {
+                from: 'top',
+                align: 'right'
+              },
+              delay: 3000,
+              z_index: 9999,
+              animate: {
+                enter: 'animated fadeInDown',
+                exit: 'animated fadeOutUp'
+              }
+            });
+          }
+        }
       }
     });
   }
@@ -307,7 +368,7 @@ export default class CategorieComponent implements OnInit {
   //           dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
   //                '<"row"<"col-sm-12"tr>>' +
   //                '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
-  //           pageLength: 10,
+  //           pageLength: 5,
   //           searching: true,
   //           info: true,
   //           lengthChange: true,
