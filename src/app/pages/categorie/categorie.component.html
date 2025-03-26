@@ -3,7 +3,7 @@
     <div class="block block-rounded">
       <div class="block-content block-content-full overflow-x-auto">
         <div class="py-3 text-center">
-          <h1 class="h3 fw-extrabold mb-1">
+          <h1 class="h3 fw-extrabold mb-1 text-uppercase">
             Gestion des Catégories
           </h1>
           <h2 class="fs-sm fw-medium text-muted mb-0">
@@ -17,7 +17,7 @@
     <!-- Dynamic Table with Export Buttons -->
     <div class="block block-rounded">
       <div class="block-header block-header-default">
-        <h3 class="block-title">
+        <h3 class="block-title text-uppercase">
           Liste des Catégories
         </h3>
         <div class="block-options">
@@ -50,7 +50,10 @@
               <td class="d-none d-sm-table-cell">{{ categorie.created_at | date:'dd/MM/yyyy' }}</td>
               <td class="text-center">
                 <div class="btn-group">
-                  <button type="button" class="btn btn-sm btn-alt-success me-2" data-bs-toggle="tooltip" title="Modifier" (click)="openModal(categorie)">
+                  <button type="button" class="btn btn-sm btn-alt-info me-2" data-bs-toggle="tooltip" title="visualiser" (click)="openViewCategorie(categorie)">
+                    <i class="fa fa-eye"></i>
+                  </button>
+                  <button type="button" class="btn btn-sm btn-alt-success me-2" data-bs-toggle="tooltip" title="Modifier" (click)="openEditCategorie(categorie)">
                     <i class="fa fa-pencil-alt"></i>
                   </button>
                   <button type="button" class="btn btn-sm btn-alt-danger" data-bs-toggle="tooltip" title="Supprimer">
@@ -69,7 +72,7 @@
   </div>
 
   <!-- Modal pour ajouter une nouvelle catégorie -->
-  <div class="modal fade" id="modal-fadein" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal fade modal-lg" id="modal-fadein" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="block block-rounded shadow-none mb-0">
@@ -96,7 +99,7 @@
               </div>
               <div class="mb-4">
                 <label class="form-label" for="description">Description</label>
-                <textarea class="form-control" id="description" placeholder="Description de la catégorie" formControlName="description" [ngClass]="{'is-invalid': isSubmitted && f['description'].errors}"></textarea>
+                <textarea class="form-control" id="description" rows="5" placeholder="Description de la catégorie" formControlName="description" [ngClass]="{'is-invalid': isSubmitted && f['description'].errors}"></textarea>
                 @if (isSubmitted && f['description'].errors) {
                   <div class="invalid-feedback">
                     @if (f['description'].errors['required']) {

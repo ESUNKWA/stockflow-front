@@ -20,11 +20,11 @@ export class CategorieService {
   }
 
   getCategorieById(id: number) {
-    return this.http.get(`${this.API_URL}/categorie/${id}`);
+    return this.http.getById(`${this.API_URL}/categorie`, id);
   }
 
   updateCategorie(id: number, categorie: any) {
-    return this.http.put(`${this.API_URL}/categorie/${id}`, categorie);
+    return this.http.patch(`${this.API_URL}/categorie/${id}`, categorie);
   }
 
   deleteCategorie(id: number) {

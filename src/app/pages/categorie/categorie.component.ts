@@ -28,7 +28,7 @@ export default class CategorieComponent implements OnInit {
   isSubmitted: boolean = false;
   isEditMode: boolean = false;
   selectedCategorie: Categorie | null = null;
-  titleModal: string = 'Ajouter une catégorie';
+  titleModal: string = 'AJOUTER UNE CATEGORIE';
   buttonText: string = 'Enregistrer';
   icon: string = 'fa fa-save';
 
@@ -125,19 +125,22 @@ export default class CategorieComponent implements OnInit {
   openNewModal(): void {
     this.isEditMode = false;
     this.selectedCategorie = null;
-    this.titleModal = 'Ajouter une catégorie';
+    const title = 'Ajouter une catégorie';
+    this.titleModal = title.toUpperCase();
     this.buttonText = 'Enregistrer';
     this.icon = 'fa fa-save';
     this.categorieForm.reset();
     this.isSubmitted = false;
   }
 
-  openModal(categorie?: Categorie): void {
+  openEditCategorie(categorie?: Categorie): void {
     this.isEditMode = !!categorie;
     this.selectedCategorie = categorie || null;
     this.buttonText = this.isEditMode ? 'Modifier' : 'Enregistrer';
     this.icon = this.isEditMode ? 'fa fa-pencil-alt' : 'fa fa-save';
-    this.titleModal = this.isEditMode ? 'Modifier une catégorie' : 'Ajouter une catégorie';
+    const title = `Modifier la catégorie [${categorie?.nom}]`;
+    const defaultTitle = 'Ajouter une catégorie';
+    this.titleModal = this.isEditMode ? title.toUpperCase() : defaultTitle.toUpperCase();
 
     if (this.isEditMode && categorie) {
       // Remplir le formulaire avec les données de la catégorie
@@ -160,6 +163,23 @@ export default class CategorieComponent implements OnInit {
     }
   }
 
+  openViewCategorie(categorie: Categorie): void {
+    this.selectedCategorie = categorie;
+    const title = 'Visualiser une catégorie';
+    this.titleModal = title.toUpperCase();
+    this.buttonText = 'Fermer';
+    this.icon = 'fa fa-eye';
+    this.categorieForm.reset();
+    this.isSubmitted = false;
+
+    // Ouvrir le modal
+    const modal = document.getElementById('modal-fadein');
+    if (modal) {
+      const modalInstance = new (window as any).bootstrap.Modal(modal);
+      modalInstance.show();
+    }
+  }
+
   saveOrUpdateCategorie(): void {
     this.isSubmitted = true;
 
@@ -168,13 +188,8 @@ export default class CategorieComponent implements OnInit {
       return;
     }
 
-    // Créer l'objet catégorie
-    const categorie = {
-      nom: this.categorieForm.get('nom')?.value,
-      description: this.categorieForm.get('description')?.value
-    };
-
     let request;
+    const categorie = this.categorieForm.value;
     if (this.isEditMode && this.selectedCategorie) {
       // Mode modification
       request = this.categorieService.updateCategorie(this.selectedCategorie.id, categorie);
@@ -186,12 +201,14 @@ export default class CategorieComponent implements OnInit {
     request.subscribe({
       next: (response: any) => {
         if (response.status === 'success') {
-          // Fermer le modal
-          const modal = document.getElementById('modal-fadein');
-          if (modal) {
-            const modalInstance = (window as any).bootstrap.Modal.getInstance(modal);
-            if (modalInstance) {
-              modalInstance.hide();
+          if (this.isEditMode) {
+            // Fermer le modal
+            const modal = document.getElementById('modal-fadein');
+            if (modal) {
+              const modalInstance = (window as any).bootstrap.Modal.getInstance(modal);
+              if (modalInstance) {
+                modalInstance.hide();
+              }
             }
           }
 
