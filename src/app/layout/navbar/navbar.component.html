@@ -36,7 +36,7 @@
         <div class="content-side content-side-user px-0 py-0">
           <!-- Visible only in mini mode -->
           <div class="smini-visible-block animated fadeIn px-3">
-            <img class="img-avatar img-avatar32" src="media/avatars/avatar15.jpg" alt="">
+            <img class="img-avatar img-avatar32" src="/media/avatars/avatar15.jpg" alt="">
           </div>
           <!-- END Visible only in mini mode -->
 
@@ -67,7 +67,8 @@
 
             @for (menu of menuItem; track $index) {
               @if(!menu.sousmenu){
-                @if (menu.nom.toLowerCase() == "utilisateurs") {
+                @let utilisateur = 'utilisateurs';
+                @if (menu.nom.toLowerCase() == utilisateur.toLowerCase()) {
                   <li class="nav-main-heading">Paramètres</li>
                 }
                 <li class="nav-main-item">
@@ -77,7 +78,8 @@
                   </a>
                 </li>
               } @else {
-                @if (menu.nom.toLowerCase() == "gestion des produits") {
+                @let gestion = 'gestion des produits';
+                @if (menu.nom.toLowerCase() == gestion.toLowerCase()) {
                   <li class="nav-main-heading">Gestion</li>
                 }
                 <li class="nav-main-item">

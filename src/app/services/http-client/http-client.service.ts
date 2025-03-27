@@ -26,6 +26,10 @@ export class HttpClientService {
     return this.http.put(url, body, options);
   }
 
+  patch(url: string, body: any, options: any = { headers: this.headers }) {
+    return this.http.patch(url, body, options);
+  }
+
   delete(url: string, options: any = { headers: this.headers }) {
     return this.http.delete(url, options);
   }
