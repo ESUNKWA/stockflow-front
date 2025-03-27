@@ -1,0 +1,187 @@
+<div class="content">
+    <!-- Heading -->
+    <div class="block block-rounded">
+      <div class="block-content block-content-full overflow-x-auto">
+        <div class="py-3 text-center">
+          <h1 class="h3 fw-extrabold mb-1 text-uppercase">
+            Gestion des Fournisseurs
+          </h1>
+          <h2 class="fs-sm fw-medium text-muted mb-0">
+            Liste des fournisseurs
+          </h2>
+        </div>
+      </div>
+    </div>
+    <!-- END Heading -->
+
+    <!-- Dynamic Table with Export Buttons -->
+    <div class="block block-rounded">
+      <div class="block-header block-header-default">
+        <h3 class="block-title text-uppercase">
+          Liste des Fournisseurs
+        </h3>
+        <div class="block-options">
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-fadein" (click)="openNewModal()">
+            <i class="fa fa-plus me-1"></i> Nouveau Fournisseur
+          </button>
+        </div>
+      </div>
+      <div class="block-content block-content-full overflow-x-auto">
+        <div *ngIf="isLoading" class="text-center py-3">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Chargement...</span>
+          </div>
+        </div>
+        
+        <!-- DataTables init on table by adding .js-dataTable-buttons class -->
+        <table class="table table-bordered table-striped table-vcenter js-dataTable-buttons">
+          <thead>
+            <tr>
+              <th>Nom</th>
+              <th class="d-none d-sm-table-cell">Adresse</th>
+              <th class="d-none d-sm-table-cell">Contact</th>
+              <th class="d-none d-sm-table-cell">Email</th>
+              <th class="d-none d-sm-table-cell">Interlocuteur</th>
+              <th class="text-center" style="width: 15%;">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let fournisseur of fournisseurs">
+              <td class="fw-semibold">{{ fournisseur.nom }}</td>
+              <td class="d-none d-sm-table-cell">{{ fournisseur.addresse_geo || 'Non définie' }}</td>
+              <td class="d-none d-sm-table-cell">{{ fournisseur.contact || 'Non défini' }}</td>
+              <td class="d-none d-sm-table-cell">{{ fournisseur.email || 'Non défini' }}</td>
+              <td class="d-none d-sm-table-cell">{{ fournisseur.interlocuteur || 'Non défini' }}</td>
+              <td class="text-center">
+                <div class="btn-group">
+                  <button type="button" class="btn btn-sm btn-alt-info me-2" data-bs-toggle="tooltip" title="visualiser" (click)="openViewFournisseur(fournisseur)">
+                    <i class="fa fa-eye"></i>
+                  </button>
+                  <button type="button" class="btn btn-sm btn-alt-success me-2" data-bs-toggle="tooltip" title="Modifier" (click)="openEditFournisseur(fournisseur)">
+                    <i class="fa fa-pencil-alt"></i>
+                  </button>
+                  <button type="button" class="btn btn-sm btn-alt-danger" data-bs-toggle="tooltip" title="Supprimer" (click)="deleteFournisseur(fournisseur.id)">
+                    <i class="fa fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="fournisseurs.length === 0 && !isLoading">
+              <td colspan="6" class="text-center">Aucun fournisseur trouvé</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+</div>
+
+
+<!-- Modal pour ajouter/modifier un fournisseur -->
+<div class="modal fade modal-lg" id="modal-fadein" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="block block-rounded shadow-none mb-0">
+                <div class="block-header block-header-default">
+                    <h3 class="block-title">{{ titleModal }}</h3>
+                    <div class="block-options">
+                        <button type="button" class="btn-block-option" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <form novalidate [formGroup]="fournisseurForm" (ngSubmit)="saveOrUpdateFournisseur()">
+                    <div class="block-content fs-sm">
+                        <div class="row">
+                            <!-- Première colonne -->
+                            <div class="col-md-6">
+                                <div class="mb-4">
+                                    <label class="form-label" for="nom">Nom</label>
+                                    <input type="text" class="form-control" id="nom" placeholder="Nom du fournisseur" formControlName="nom" [ngClass]="{'is-invalid': isSubmitted && f['nom'].errors}">
+                                    @if (isSubmitted && f['nom'].errors) {
+                                        <div class="invalid-feedback">
+                                        @if (f['nom'].errors['required']) {
+                                            <div>Le nom est obligatoire</div>
+                                        }
+                                        </div>
+                                    }
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label" for="contact">Contact</label>
+                                    <input type="text" class="form-control" id="contact" placeholder="Contact du fournisseur" formControlName="contact" [ngClass]="{'is-invalid': isSubmitted && f['contact'].errors}">
+                                    @if (isSubmitted && f['contact'].errors) {
+                                        <div class="invalid-feedback">
+                                        @if (f['contact'].errors['required']) {
+                                            <div>Le contact est obligatoire</div>
+                                        }
+                                        </div>
+                                    }
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label" for="interlocuteur">Interlocuteur</label>
+                                    <input type="text" class="form-control" id="interlocuteur" placeholder="Nom de l'interlocuteur" formControlName="interlocuteur" [ngClass]="{'is-invalid': isSubmitted && f['interlocuteur'].errors}">
+                                    @if (isSubmitted && f['interlocuteur'].errors) {
+                                        <div class="invalid-feedback">
+                                        @if (f['interlocuteur'].errors['required']) {
+                                            <div>L'interlocuteur est obligatoire</div>
+                                        }
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        
+                            <!-- Deuxième colonne -->
+                            <div class="col-md-6">
+                                <div class="mb-4">
+                                    <label class="form-label" for="addresse_geo">Adresse</label>
+                                    <input type="text" class="form-control" id="addresse_geo" placeholder="Adresse du fournisseur" formControlName="addresse_geo" [ngClass]="{'is-invalid': isSubmitted && f['addresse_geo'].errors}">
+                                    @if (isSubmitted && f['addresse_geo'].errors) {
+                                        <div class="invalid-feedback">
+                                        @if (f['addresse_geo'].errors['required']) {
+                                            <div>L'adresse est obligatoire</div>
+                                        }
+                                        </div>
+                                    }
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label" for="email">Email</label>
+                                    <input type="email" class="form-control" id="email" placeholder="Email du fournisseur" formControlName="email" [ngClass]="{'is-invalid': isSubmitted && f['email'].errors}">
+                                    @if (isSubmitted && f['email'].errors) {
+                                        <div class="invalid-feedback">
+                                        @if (f['email'].errors['required']) {
+                                            <div>L'email est obligatoire</div>
+                                        }
+                                        @if (f['email'].errors['email']) {
+                                            <div>Veuillez entrer une adresse email valide</div>
+                                        }
+                                        </div>
+                                    }
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label" for="contact_interlocuteur">Contact de l'interlocuteur</label>
+                                    <input type="text" class="form-control" id="contact_interlocuteur" placeholder="Contact de l'interlocuteur" formControlName="contact_interlocuteur" [ngClass]="{'is-invalid': isSubmitted && f['contact_interlocuteur'].errors}">
+                                    @if (isSubmitted && f['contact_interlocuteur'].errors) {
+                                        <div class="invalid-feedback">
+                                        @if (f['contact_interlocuteur'].errors['required']) {
+                                            <div>Le contact de l'interlocuteur est obligatoire</div>
+                                        }
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="block-content block-content-full block-content-sm text-end border-top">
+                        @if (!titleModal.includes('VISUALISER')) {
+                            <button type="submit" class="btn btn-alt-primary jq-notify me-2">
+                                <i [class]="icon"></i> {{ buttonText }}
+                            </button>
+                        }
+                        <button type="button" class="btn btn-alt-warning" data-bs-dismiss="modal">
+                            <i class="fa fa-times"></i> {{ titleModal.includes('VISUALISER') ? 'Fermer' : 'Annuler' }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

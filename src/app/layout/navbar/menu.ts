@@ -10,14 +10,14 @@ export const menu: any[] = [
         sousmenu: [
             {
                 nom: "Catégories",
-                lien: "/categorie"
+                lien: "/gestion-des-produits/categorie"
             },
             {
                 nom: "Fournisseurs",
-                lien: "/dashboard"
+                lien: "/gestion-des-produits/fournisseurs"
             },{
                 nom: "Produits",
-                lien: "/produit"
+                lien: "/gestion-des-produits/produit"
             }
         ]
     },
