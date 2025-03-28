@@ -72,6 +72,24 @@ export const menu: any[] = [
         ]
     },
     {
+        nom: "Rapports et Statistiques",
+        icon:"fa fa-chart-line",
+        sousmenu: [
+            {
+                nom: "Rapport de Ventes",
+                lien: "/dashboard",
+            },
+            {
+                nom: "Rapport d'Achats",
+                lien: "/dashboard"
+            },
+            {
+                nom: "Rapport de Stock",
+                lien: "/dashboard"
+            }
+        ]
+    },
+    {
         nom: "Utilisateurs",
         lien: "/dashboard",
         icon:"fa fa-user-cog",
