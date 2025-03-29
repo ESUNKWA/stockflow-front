@@ -26,12 +26,12 @@ export const menu: any[] = [
         icon:"fa fa-cart-shopping",
         sousmenu: [
             {
-                nom: "Achats",
-                lien: "/dashboard"
+                nom: "Achat",
+                lien: "/gestion-des-achats/achat"
             },
             {
                 nom: "Historique des Achats",
-                lien: "/dashboard"
+                lien: "/gestion-des-achats/historique-achat"
             }
         ]
     },

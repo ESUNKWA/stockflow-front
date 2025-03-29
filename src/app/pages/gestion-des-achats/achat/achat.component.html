@@ -1,0 +1,152 @@
+<div class="content">
+    <!-- Heading -->
+  <div class="block block-rounded">
+    <div class="block-content block-content-full overflow-x-auto">
+      <div class="py-3 text-center">
+        <h1 class="h3 fw-extrabold mb-1 text-uppercase">
+          Gestion des Achats
+        </h1>
+        <h2 class="fs-sm fw-medium text-muted mb-0">
+          Enregistrer un achat
+        </h2>
+      </div>
+    </div>
+  </div>
+  <!-- END Heading -->
+  <div class="block block-rounded">
+    <div class="block-header block-header-default">
+      <h3 class="block-title">Nouvel Achat</h3>
+    </div>
+    <div class="block-content">
+      <div class="row">
+        <div class="col-lg-12">
+          <form [formGroup]="achatForm" (ngSubmit)="onSubmit()">
+            <!-- Informations générales -->
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label" for="libelle">Libellé</label>
+                  <input type="text" class="form-control" id="libelle" formControlName="libelle">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label" for="description">Description</label>
+                  <input type="text" class="form-control" id="description" formControlName="description">
+                </div>
+              </div>
+            </div>
+
+            <div class="row mb-4">
+              <div class="col-md-4">
+                <div class="mb-3">
+                  <label class="form-label" for="montant_total">Montant Total</label>
+                  <input type="number" class="form-control" id="montant_total" formControlName="montant_total">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="mb-3">
+                  <label class="form-label" for="date_achat">Date d'achat</label>
+                  <input type="date" class="form-control" id="date_achat" formControlName="date_achat">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="mb-3">
+                  <label class="form-label" for="fournisseur">Fournisseur</label>
+                  <select class="form-select" id="fournisseur" formControlName="fournisseur">
+                    <option value="">Sélectionner un fournisseur</option>
+                    <option *ngFor="let fournisseur of fournisseurs" [value]="fournisseur.id">
+                      {{fournisseur.nom}}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label" for="mode_paiement">Mode de paiement</label>
+                  <select class="form-select" id="mode_paiement" formControlName="mode_paiement">
+                    <option value="">Sélectionner un mode de paiement</option>
+                    <option *ngFor="let mode of modesPaiement" [value]="mode">
+                      {{mode}}
+                    </option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label" for="statut">Statut</label>
+                  <select class="form-select" id="statut" formControlName="statut">
+                    <option value="">Sélectionner un statut</option>
+                    <option *ngFor="let statut of statuts" [value]="statut">
+                      {{statut}}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <hr>
+
+            <!-- Détails d'achat -->
+            <div class="row mb-4">
+              <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h4>Détails d'achat</h4>
+                  <button type="button" class="btn btn-primary" (click)="ajouterDetailAchat()">
+                    <i class="fa fa-plus me-1"></i> Ajouter un détail
+                  </button>
+                </div>
+
+                <div formArrayName="detail_achat">
+                  <div *ngFor="let detail of detailAchat.controls; let i=index" [formGroupName]="i" class="row mb-3">
+                    <div class="col-md-4">
+                      <div class="mb-3">
+                        <label class="form-label">Produit</label>
+                        <select class="form-select" formControlName="produit">
+                          <option value="">Sélectionner un produit</option>
+                          <option *ngFor="let produit of produits" [value]="produit.id">
+                            {{produit.libelle}}
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="mb-3">
+                        <label class="form-label">Prix unitaire</label>
+                        <input type="number" class="form-control" formControlName="prix_unitaire">
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="mb-3">
+                        <label class="form-label">Quantité</label>
+                        <input type="number" class="form-control" formControlName="quantite">
+                      </div>
+                    </div>
+                    <div class="col-md-2">
+                      <div class="mb-3">
+                        <label class="form-label">&nbsp;</label>
+                        <button type="button" class="btn btn-danger d-block" (click)="supprimerDetailAchat(i)">
+                           <i class="fa fa-trash me-1"></i> Supprimer
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <hr>
+            <div class="row mb-4">
+              <div class="col-12">
+                <button type="submit" class="btn btn-primary" [disabled]="!achatForm.valid">
+                   <i class="fa fa-save me-1"></i> Enregistrer l'achat
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
