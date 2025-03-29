@@ -1,1 +1,207 @@
-<p>produit works!</p>
+<div class="content">
+    <!-- Heading -->
+  <div class="block block-rounded">
+    <div class="block-content block-content-full overflow-x-auto">
+      <div class="py-3 text-center">
+        <h1 class="h3 fw-extrabold mb-1 text-uppercase">
+          Gestion des Produits
+        </h1>
+        <h2 class="fs-sm fw-medium text-muted mb-0">
+          Liste des produits
+        </h2>
+      </div>
+    </div>
+  </div>
+  <!-- END Heading -->
+
+  <!-- Dynamic Table with Export Buttons -->
+  <div class="block block-rounded">
+    <div class="block-header block-header-default">
+      <h3 class="block-title text-uppercase">
+        Liste des Produits
+      </h3>
+      <div class="block-options">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-fadein" (click)="openNewModal()">
+          <i class="fa fa-plus me-1"></i> Nouveau Produit
+        </button>
+      </div>
+    </div>
+    <div class="block-content block-content-full overflow-x-auto">
+      <div *ngIf="isLoading" class="text-center py-3">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Chargement...</span>
+        </div>
+      </div>
+      
+      <!-- DataTables init on table by adding .js-dataTable-buttons class -->
+      <table class="table table-bordered table-striped table-vcenter js-dataTable-buttons">
+        <thead>
+          <tr>
+            <th style="width: 10%;">Image</th>
+            <th style="width: 20%;">Nom</th>
+            <th style="width: 15%;">Prix d'achat</th>
+            <th style="width: 15%;">Prix de vente</th>
+            <th style="width: 10%;">Stock initial</th>
+            <th style="width: 15%;">Catégorie</th>
+            <th style="width: 15%;" class="text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let produit of produits">
+            <td>
+              <img *ngIf="produit.image" [src]="produit.image" alt="Image du produit" class="img-thumbnail" style="max-width: 50px;">
+              <span *ngIf="!produit.image">Aucune image</span>
+            </td>
+            <td class="fw-semibold">{{ produit.nom }}</td>
+            <td>{{ produit.prix_achat | currency:'XOF' }}</td>
+            <td>{{ produit.prix_vente | currency:'XOF' }}</td>
+            <td>{{ produit.stock_initial }}</td>
+            <td>{{ produit.categorie?.nom }}</td>
+            <td class="text-center">
+              <div class="btn-group">
+                <button type="button" class="btn btn-sm btn-alt-info me-2" data-bs-toggle="tooltip" title="visualiser" (click)="openViewProduit(produit)">
+                  <i class="fa fa-eye"></i>
+                </button>
+                <button type="button" class="btn btn-sm btn-alt-success me-2" data-bs-toggle="tooltip" title="Modifier" (click)="openEditProduit(produit)">
+                  <i class="fa fa-pencil-alt"></i>
+                </button>
+                <button type="button" class="btn btn-sm btn-alt-danger" data-bs-toggle="tooltip" title="Supprimer" (click)="deleteProduit(produit.id)">
+                  <i class="fa fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="produits.length === 0 && !isLoading">
+            <td colspan="7" class="text-center">Aucun produit trouvé</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal pour ajouter/modifier un produit -->
+<div class="modal fade modal-lg" id="modal-fadein" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="block block-rounded shadow-none mb-0">
+        <div class="block-header block-header-default">
+          <h3 class="block-title">{{ titleModal }}</h3>
+          <div class="block-options">
+            <button type="button" class="btn-block-option" data-bs-dismiss="modal" aria-label="Close">
+              <i class="fa fa-times"></i>
+            </button>
+          </div>
+        </div>
+        <form novalidate [formGroup]="produitForm" (ngSubmit)="saveOrUpdateProduit()" enctype="multipart/form-data">
+          <div class="block-content fs-sm">
+            <div class="mb-4">
+              <label class="form-label" for="nom">Nom</label>
+              <input type="text" class="form-control" id="nom" placeholder="Nom du produit" formControlName="nom" [ngClass]="{'is-invalid': isSubmitted && f['nom'].errors}">
+              @if (isSubmitted && f['nom'].errors) {
+                <div class="invalid-feedback">
+                  @if (f['nom'].errors['required']) {
+                    <div>Le nom est obligatoire</div>
+                  }
+                </div>
+              }
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-4">
+                  <label class="form-label" for="prix_achat">Prix d'achat</label>
+                  <input type="number" class="form-control" id="prix_achat" placeholder="Prix d'achat" formControlName="prix_achat" [ngClass]="{'is-invalid': isSubmitted && f['prix_achat'].errors}">
+                  @if (isSubmitted && f['prix_achat'].errors) {
+                    <div class="invalid-feedback">
+                      @if (f['prix_achat'].errors['required']) {
+                        <div>Le prix d'achat est obligatoire</div>
+                      }
+                      @if (f['prix_achat'].errors['min']) {
+                        <div>Le prix d'achat doit être supérieur à 0</div>
+                      }
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="mb-4">
+                  <label class="form-label" for="prix_vente">Prix de vente</label>
+                  <input type="number" class="form-control" id="prix_vente" placeholder="Prix de vente" formControlName="prix_vente" [ngClass]="{'is-invalid': isSubmitted && f['prix_vente'].errors}">
+                  @if (isSubmitted && f['prix_vente'].errors) {
+                    <div class="invalid-feedback">
+                      @if (f['prix_vente'].errors['required']) {
+                        <div>Le prix de vente est obligatoire</div>
+                      }
+                      @if (f['prix_vente'].errors['min']) {
+                        <div>Le prix de vente doit être supérieur à 0</div>
+                      }
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-4">
+                  <label class="form-label" for="stock_initial">Stock initial</label>
+                  <input type="number" class="form-control" id="stock_initial" placeholder="Stock initial" formControlName="stock_initial" [ngClass]="{'is-invalid': isSubmitted && f['stock_initial'].errors}">
+                  @if (isSubmitted && f['stock_initial'].errors) {
+                    <div class="invalid-feedback">
+                      @if (f['stock_initial'].errors['required']) {
+                        <div>Le stock initial est obligatoire</div>
+                      }
+                      @if (f['stock_initial'].errors['min']) {
+                        <div>Le stock initial doit être supérieur ou égal à 0</div>
+                      }
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="mb-4">
+                  <label class="form-label" for="categorie">Catégorie</label>
+                  <select class="form-control" id="categorie" formControlName="categorie" [ngClass]="{'is-invalid': isSubmitted && f['categorie'].errors}">
+                    <option value="">Sélectionnez une catégorie</option>
+                    <option *ngFor="let categorie of categories" [value]="categorie.id">{{ categorie.nom }}</option>
+                  </select>
+                  @if (isSubmitted && f['categorie'].errors) {
+                    <div class="invalid-feedback">
+                      @if (f['categorie'].errors['required']) {
+                        <div>La catégorie est obligatoire</div>
+                      }
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label" for="image">Image du produit</label>
+              <input type="file" class="form-control" id="image" (change)="onFileSelected($event)" accept="image/*">
+              <div *ngIf="selectedImage" class="mt-2">
+                <img [src]="selectedImage" alt="Image sélectionnée" class="img-thumbnail" style="max-width: 200px;">
+              </div>
+              <div *ngIf="currentImage" class="mt-2">
+                <img [src]="currentImage" alt="Image actuelle" class="img-thumbnail" style="max-width: 200px;">
+              </div>
+            </div>
+          </div>
+          <div class="block-content block-content-full block-content-sm text-end border-top">
+            @if (!titleModal.includes('VISUALISER')) {
+              <button type="submit" class="btn btn-alt-primary jq-notify me-2">
+                <i [class]="icon"></i> {{ buttonText }}
+              </button>
+            }
+            <button type="button" class="btn btn-alt-warning" data-bs-dismiss="modal">
+              <i class="fa fa-times"></i> {{ titleModal.includes('VISUALISER') ? 'Fermer' : 'Annuler' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
